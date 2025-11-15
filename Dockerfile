@@ -22,9 +22,11 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar usuário não-root (reusa grupo existente se houver)
-RUN (groupadd -g ${USER_GID} claude || true) && \
-    useradd -m -u ${USER_UID} -g ${USER_GID} -s /bin/zsh claude && \
+# Reconfigurar usuário node existente como claude
+RUN usermod -l claude node && \
+    usermod -d /home/claude -m claude && \
+    usermod -s /bin/zsh claude && \
+    groupmod -n claude node && \
     echo "claude ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Instalar Claude Code CLI
