@@ -11,8 +11,8 @@ services:
       - TZ=America/Sao_Paulo
 
     volumes:
-      # Workspace persistente
-      - workspace:/workspace
+      # Workspace = /root/ da VPS (acesso total)
+      - /root:/workspace
       # Configuração Claude persistente
       - claude_config:/home/claude/.claude
       # História ZSH persistente
@@ -55,7 +55,6 @@ services:
         - "traefik.http.services.moscow-agents.loadbalancer.server.port=8080"
 
 volumes:
-  workspace:
   claude_config:
   zsh_history:
 
