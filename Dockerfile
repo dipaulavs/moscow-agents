@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar usuário não-root
-RUN groupadd -g ${USER_GID} claude && \
+# Criar usuário não-root (reusa grupo existente se houver)
+RUN (groupadd -g ${USER_GID} claude || true) && \
     useradd -m -u ${USER_UID} -g ${USER_GID} -s /bin/zsh claude && \
     echo "claude ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
