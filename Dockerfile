@@ -39,6 +39,10 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
 # Configurar tema ZSH
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/' /home/claude/.zshrc
 
+# Criar diretórios para volumes com permissões corretas
+RUN mkdir -p /home/claude/.claude /workspace && \
+    chown -R claude:claude /home/claude/.claude /workspace
+
 # Diretório de trabalho
 WORKDIR /workspace
 
