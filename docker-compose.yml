@@ -1,17 +1,9 @@
 version: '3.8'
 
 services:
-  moscow-agents:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        USER_UID: 1000
-        USER_GID: 1000
+  app:
     image: moscow-agents:latest
-    container_name: moscow-agents
     hostname: moscow-agents
-    restart: unless-stopped
 
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
@@ -29,39 +21,41 @@ services:
       - ./gitconfig:/home/claude/.gitconfig:ro
 
     networks:
-      - traefik-public
-
-    # Labels Traefik (para futuro web terminal)
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-
-      # HTTP
-      - "traefik.http.routers.moscow-agents.rule=Host(`moscow-agents.loop9.com.br`)"
-      - "traefik.http.routers.moscow-agents.entrypoints=web"
-      - "traefik.http.routers.moscow-agents.middlewares=https-redirect"
-
-      # HTTPS
-      - "traefik.http.routers.moscow-agents-secure.rule=Host(`moscow-agents.loop9.com.br`)"
-      - "traefik.http.routers.moscow-agents-secure.entrypoints=websecure"
-      - "traefik.http.routers.moscow-agents-secure.tls=true"
-      - "traefik.http.routers.moscow-agents-secure.tls.certresolver=letsencrypt"
-
-      # Service (placeholder - sem porta exposta por enquanto)
-      - "traefik.http.services.moscow-agents.loadbalancer.server.port=8080"
+      - loop9Net
 
     # Manter container rodando para docker exec
     stdin_open: true
     tty: true
 
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: unless-stopped
+
+      # Labels Traefik (para futuro web terminal)
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=loop9Net"
+
+        # HTTP
+        - "traefik.http.routers.moscow-agents.rule=Host(`moscow-agents.loop9.com.br`)"
+        - "traefik.http.routers.moscow-agents.entrypoints=web"
+        - "traefik.http.routers.moscow-agents.middlewares=https-redirect"
+
+        # HTTPS
+        - "traefik.http.routers.moscow-agents-secure.rule=Host(`moscow-agents.loop9.com.br`)"
+        - "traefik.http.routers.moscow-agents-secure.entrypoints=websecure"
+        - "traefik.http.routers.moscow-agents-secure.tls=true"
+        - "traefik.http.routers.moscow-agents-secure.tls.certresolver=letsencryptresolver"
+
+        # Service (placeholder - sem porta exposta por enquanto)
+        - "traefik.http.services.moscow-agents.loadbalancer.server.port=8080"
+
 volumes:
   workspace:
-    driver: local
   claude_config:
-    driver: local
   zsh_history:
-    driver: local
 
 networks:
-  traefik-public:
+  loop9Net:
     external: true
