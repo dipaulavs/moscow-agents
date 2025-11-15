@@ -32,16 +32,16 @@ RUN usermod -l claude node && \
 # Instalar Claude Code CLI
 RUN npm install -g @anthropic-ai/claude-code
 
+# Criar diretórios para volumes (antes de mudar usuário)
+RUN mkdir -p /home/claude/.claude /workspace && \
+    chown -R 1000:1000 /home/claude/.claude /workspace
+
 # Instalar Oh My Zsh
 USER claude
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
 # Configurar tema ZSH
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/' /home/claude/.zshrc
-
-# Criar diretórios para volumes com permissões corretas
-RUN mkdir -p /home/claude/.claude /workspace && \
-    chown -R claude:claude /home/claude/.claude /workspace
 
 # Diretório de trabalho
 WORKDIR /workspace
