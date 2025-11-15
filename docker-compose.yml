@@ -11,8 +11,8 @@ services:
       - TZ=America/Sao_Paulo
 
     volumes:
-      # Workspace = /root/ da VPS (acesso total)
-      - /root:/workspace
+      # Workspace organizado do Moscow Agents
+      - /root/moscow-workspace:/workspace
       # Configuração Claude persistente
       - claude_config:/home/claude/.claude
       # História ZSH persistente
